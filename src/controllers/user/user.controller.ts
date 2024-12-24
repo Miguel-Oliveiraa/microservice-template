@@ -14,8 +14,8 @@ router.post(
       const { email, name } = req.body;
       const user = await userService.createUser({ email, name });
       res.status(201).json(user);
-    } catch (error) {
-      res.status(400).json(error);
+    } catch (error: any) {
+      res.status(400).json(error.message);
     }
   },
 );
@@ -25,9 +25,8 @@ router.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const user = await userService.getUserById(Number(id));
     res.status(200).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(404).json(error);
+  } catch (error: any) {
+    res.status(404).json(error.message);
   }
 });
 
