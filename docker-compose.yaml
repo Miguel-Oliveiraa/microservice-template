@@ -1,0 +1,27 @@
+services:
+  postgresdb:
+    restart: always
+    image: postgres:latest
+    container_name: postgresdb
+    environment:
+      POSTGRES_DB: '${POSTGRES_DB}'
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+    hostname: postgresdb
+    ports:
+      - '${POSTGRES_PORT}:5432'
+    networks:
+      - inovaula_net
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -h localhost',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  inovaula_net:
+    driver: bridge
