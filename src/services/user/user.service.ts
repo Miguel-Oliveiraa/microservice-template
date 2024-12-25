@@ -11,12 +11,15 @@ export class UserService {
       throw new Error('Email already in use');
     }
 
-    const user: UserDto = await this.userRepository.createUser(dto);
+    const user: UserDto | null = await this.userRepository.createUser(dto);
+    if (!user) {
+      throw new Error('Failed to create user');
+    }
     return user;
   };
 
   getUserById = async (id: number) => {
-    const user: UserDto = await this.userRepository.getUserById(id);
+    const user: UserDto | null = await this.userRepository.getUserById(id);
     if (!user) {
       throw new Error('User not found');
     }

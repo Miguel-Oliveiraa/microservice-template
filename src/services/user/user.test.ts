@@ -35,10 +35,10 @@ describe('User Service', () => {
 
       // Verifica se o repositório foi chamado com os argumentos corretos
       expect(spyGetUser).toHaveBeenCalledWith('test@example.com');
-      expect(spyCreateUser).toHaveBeenCalledWith(
-        'test@example.com',
-        'Test User',
-      );
+      expect(spyCreateUser).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        name: 'Test User',
+      });
       expect(result).toEqual(mockUser);
     });
   });
