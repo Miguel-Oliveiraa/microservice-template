@@ -9,12 +9,12 @@ const config: JestConfigWithTsJest = {
   moduleDirectories: ['node_modules', 'src'],
   rootDir: './',
   modulePaths: ['<rootDir>'],
-  collectCoverageFrom: ['**/*.(t|j)s'],
+  // collectCoverageFrom: ['**/*.(t|j)s'],
   testEnvironment: 'node',
   clearMocks: true,
   collectCoverage: true,
-  coverageDirectory: 'coverage',
-  coverageProvider: 'v8',
+  // coverageDirectory: 'coverage',
+  // coverageProvider: 'v8',
 };
 
 export default config;

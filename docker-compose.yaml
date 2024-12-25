@@ -3,6 +3,9 @@ services:
     restart: always
     image: postgres:latest
     container_name: postgresdb
+    profiles:
+      - full
+      - db-only
     environment:
       POSTGRES_DB: '${POSTGRES_DB}'
       POSTGRES_USER: '${POSTGRES_USER}'
@@ -21,6 +24,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myapp
+    profiles:
+      - full
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresdb:${POSTGRES_PORT}/${POSTGRES_DB}
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    networks:
+      - development_net
 
 networks:
   development_net:
