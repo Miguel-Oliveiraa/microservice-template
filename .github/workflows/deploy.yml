@@ -34,6 +34,7 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           scp -o StrictHostKeyChecking=no -i private_key -r ./* ${USER_NAME}@${HOSTNAME}:/home/ubuntu/node-app/microservice-template
 
+      - uses: actions/checkout@v2
       - name: Deploy
         env:
           PRIVATE_KEY: ${{ secrets.AWS_EC2_SSH_KEY }}
