@@ -29,7 +29,7 @@ jobs:
       # Step 4: Connect via SSH, remove old files, and copy new files
       - name: remove old files
         run: |
-          ssh -i $SSH_KEY_PATH ubuntu@$SSH_KNOWN_HOSTS "rm -rf /home/ubuntu/node-app/microservice-template/*"
+          ssh -i "$SSH_KEY_PATH" ubuntu@"$SSH_KNOWN_HOSTS" "rm -rf /home/ubuntu/node-app/microservice-template/*"
         shell: bash
         env:
           SSH_KNOWN_HOSTS: ${{secrets.AWS_EC2_IP}}
