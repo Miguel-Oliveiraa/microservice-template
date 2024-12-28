@@ -22,7 +22,7 @@ jobs:
 
       - name: print ssh key
         run: |
-          echo shh_key.pem
+          cat shh_key.pem
 
       # Step 3: Connect via SSH, remove old files, and copy new files
       - name: Connect via SSH, remove old files, and copy new files
