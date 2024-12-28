@@ -19,6 +19,7 @@ jobs:
         run: |
           echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ssh_key.pem
           chmod 600 ssh_key.pem
+          cat ssh_key.pem
 
       # Step 3: Connect via SSH, remove old files, and copy new files
       - name: remove old files
