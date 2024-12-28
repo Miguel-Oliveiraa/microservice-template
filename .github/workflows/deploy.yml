@@ -14,12 +14,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Connect via SSH, remove old files, and copy new files
+      # Step 2: Set up SSH key
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ssh_key.pem
+          chmod 600 ssh_key.pem
+
+      # Step 3: Connect via SSH, remove old files, and copy new files
       - name: Connect via SSH, remove old files, and copy new files
         run: |
-          ssh -i "${{ secrets.AWS_EC2_SSH_KEY }}" ubuntu@${{ secrets.AWS_EC2_IP }} "rm -rf /home/ubuntu/node-app/microservice-template/*"
-          scp -i "${{ secrets.AWS_EC2_SSH_KEY }}" -r ./* ubuntu@${{ secrets.AWS_EC2_IP }}:/home/ubuntu/node-app/microservice-template
-          ssh -i "${{ secrets.AWS_EC2_SSH_KEY }}" ubuntu@${{ secrets.AWS_EC2_IP }} << EOF
+          ssh -i ssh_key.pem ubuntu@${{ secrets.AWS_EC2_IP }} "rm -rf /home/ubuntu/node-app/microservice-template/*"
+          scp -i ssh_key.pem -r ./* ubuntu@${{ secrets.AWS_EC2_IP }}:/home/ubuntu/node-app/microservice-template
+          ssh -i ssh_key.pem ubuntu@${{ secrets.AWS_EC2_IP }} << EOF
           cd /home/ubuntu/node-app/microservice-template
           docker compose --profile deploy up --build -d
           EOF
