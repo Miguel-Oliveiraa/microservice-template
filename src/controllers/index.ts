@@ -4,7 +4,7 @@ import userController from './user/user.controller';
 const router = Router();
 
 router.get('/', (req, res) => {
-  res.send('Welcome to the API');
+  res.send('Hello DevOps');
 });
 router.use('/users', userController);
 
