@@ -34,8 +34,5 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY package*.json ./
 
-# Expor a porta da aplicação
-EXPOSE 3000
-
 # Comando para executar as migrations e iniciar a aplicação
 CMD npx prisma migrate dev && npm run start
