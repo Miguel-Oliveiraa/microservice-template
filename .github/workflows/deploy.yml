@@ -15,11 +15,11 @@ jobs:
         uses: actions/checkout@v2
 
       # Step 2: Set up SSH key
-    - name: Set up SSH key
-      run: |
-        touch ssh_key.pem
-        echo "${{ secrets.AWS_EC2_SSH_KEY }}" | cat > ssh_key.pem
-        chmod 400 ssh_key.pem
+      - name: Set up SSH key
+        run: |
+          touch ssh_key.pem
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" | cat > ssh_key.pem
+          chmod 400 ssh_key.pem
 
       # Step 3: Connect via SSH, remove old files, and copy new files
       - name: remove old files
