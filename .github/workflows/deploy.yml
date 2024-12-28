@@ -44,6 +44,9 @@ jobs:
           POSTGRES_PORT: 5432
           POSTGRES_HOST: ${{ secrets.RDS_ENDPOINT }}
           DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+          PRIVATE_KEY: ${{ secrets.AWS_EC2_SSH_KEY }}
+          HOSTNAME: ${{secrets.AWS_EC2_IP}}
+          USER_NAME: ${{secrets.USER_NAME}}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
