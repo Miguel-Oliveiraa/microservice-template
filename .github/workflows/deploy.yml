@@ -21,7 +21,12 @@ jobs:
           echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ssh_key.pem
           chmod 400 ssh_key.pem
 
-      # Step 3: Connect via SSH, remove old files, and copy new files
+      # Step 3: Add EC2 instance to known hosts
+      - name: Add EC2 instance to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.AWS_EC2_IP }} >> ~/.ssh/known_hosts
+
+      # Step 4: Connect via SSH, remove old files, and copy new files
       - name: remove old files
         run: |
           ssh -i ssh_key.pem ubuntu@${{ secrets.AWS_EC2_IP }} "rm -rf /home/ubuntu/node-app/microservice-template/*"
