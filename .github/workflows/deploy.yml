@@ -20,6 +20,10 @@ jobs:
           echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ssh_key.pem
           chmod 600 ssh_key.pem
 
+      - name: print ssh key
+        run: |
+          echo shh_key.pem
+
       # Step 3: Connect via SSH, remove old files, and copy new files
       - name: Connect via SSH, remove old files, and copy new files
         run: |
