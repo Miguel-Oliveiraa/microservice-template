@@ -1,4 +1,4 @@
-name: Deploy to AWS EC2
+name: Deploy Microservice
 
 on:
   push:
@@ -10,23 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - name: Set up SSH and deploy
+      # Step 2: Connect via SSH and copy files
+      - name: Connect via SSH and copy files
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_IP }} << 'EOF'
-            cd /home/ubuntu/node-app
-            git pull origin main
-            docker build --tag "node-app" .
-            docker stop node-app || true
-            docker rm node-app || true
-            docker run -d \
-                -e PORT=8080 \
-                -e DATABASE_URL="postgres://${{ secrets.RDS_USER }}:${{ secrets.RDS_PASSWORD }}@${{ secrets.RDS_ENDPOINT }}/${{ secrets.RDS_DB_NAME }}" \
-                -p 8080:8080 \
-                --name node-app node-app
+          scp -i "${{ secrets.AWS_EC2_SSH_KEY }}" -r ./* ubuntu@${{ secrets.AWS_EC2_IP }}:/node-app/microservice-template
+          ssh -i "${{ secrets.AWS_EC2_SSH_KEY }}" ubuntu@${{ secrets.AWS_EC2_IP }} << EOF
+          cd /node-app/microservice-template
+          docker compose --profile deploy up --build -d
           EOF
