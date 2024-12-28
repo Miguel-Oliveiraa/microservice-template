@@ -17,12 +17,8 @@ jobs:
       # Step 2: Set up SSH key
       - name: Set up SSH key
         run: |
-          echo ${{ secrets.AWS_EC2_SSH_KEY }} > ssh_key.pem
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ssh_key.pem
           chmod 600 ssh_key.pem
-
-      - name: print ssh key
-        run: |
-          echo ${{ secrets.AWS_EC2_SSH_KEY }}
 
       # Step 3: Connect via SSH, remove old files, and copy new files
       - name: Connect via SSH, remove old files, and copy new files
