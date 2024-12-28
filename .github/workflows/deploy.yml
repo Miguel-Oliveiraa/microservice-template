@@ -1,4 +1,4 @@
-name: Deploy Microservice
+name: Deploy
 
 on:
   push:
@@ -6,37 +6,54 @@ on:
       - main
 
 jobs:
-  deploy:
+  Deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Create SSH key
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ../private.key
-          sudo chmod 400 ../private.key
-          echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -i $SSH_KEY_PATH ubuntu@$SSH_KNOWN_HOSTS "rm -rf /home/ubuntu/node-app/microservice-template/*"
-        shell: bash
+      - uses: actions/checkout@v2
+      - name: Build & Deploy
         env:
-          SSH_PRIVATE_KEY: ${{secrets.AWS_EC2_SSH_KEY}}
-          SSH_KNOWN_HOSTS: ${{secrets.AWS_EC2_IP}}
-          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+          PRIVATE_KEY: ${{ secrets.AWS_EC2_SSH_KEY }}
+          HOSTNAME: ${{secrets.AWS_EC2_IP}}
+          USER_NAME: ${{secrets.USER_NAME}}
 
-      # Step 4: Connect via SSH, remove old files, and copy new files
-      # - name: remove old files
-      #   run: |
-      #     ssh -i $SSH_KEY_PATH ubuntu@$SSH_KNOWN_HOSTS "rm -rf /home/ubuntu/node-app/microservice-template/*"
-      #   shell: bash
-      #   env:
-      #     SSH_KNOWN_HOSTS: ${{secrets.AWS_EC2_IP}}
-      #     SSH_KEY_PATH: ${{ github.workspace }}/../private.key
-# scp -i ssh_key.pem -r ./* ubuntu@${{ secrets.AWS_EC2_IP }}:/home/ubuntu/node-app/microservice-template
-#   ssh -i ssh_key.pem ubuntu@${{ secrets.AWS_EC2_IP }} << EOF
-#   cd /home/ubuntu/node-app/microservice-template
-#   docker compose --profile deploy up --build -d
-#   EOF
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+              # Now we have got the access of EC2 and we will start the deploy .
+              rm -rf /home/ubuntu/node-app/microservice-template/*
+              '
+
+# name: Deploy Microservice
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # Step 1: Checkout the repository
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
+
+#       # Step 2: Set up SSH key
+#       - name: Set up SSH key
+#         run: |
+#           echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ssh_key.pem
+#           chmod 600 ssh_key.pem
+
+#       # Step 3: Connect via SSH, remove old files, and copy new files
+#       - name: Connect via SSH, remove old files, and copy new files
+#         run: |
+#           ssh -i ssh_key.pem ubuntu@${{ secrets.AWS_EC2_IP }} "rm -rf /home/ubuntu/node-app/microservice-template/*"
+#           scp -i ssh_key.pem -r ./* ubuntu@${{ secrets.AWS_EC2_IP }}:/home/ubuntu/node-app/microservice-template
+#           ssh -i ssh_key.pem ubuntu@${{ secrets.AWS_EC2_IP }} << EOF
+#           cd /home/ubuntu/node-app/microservice-template
+#           docker compose --profile deploy up --build -d
+#           EOF
