@@ -35,6 +35,23 @@ jobs:
           scp -o StrictHostKeyChecking=no -i private_key -r ./* ${USER_NAME}@${HOSTNAME}:/home/ubuntu/node-app/microservice-template
 
       - uses: actions/checkout@v2
+      - name: Setup environment
+        env:
+          PORT: ${{ secrets.APP_PORT }}
+          POSTGRES_DB: ${{ secrets.RDS_DB_NAME }}
+          POSTGRES_USER: ${{ secrets.RDS_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+          POSTGRES_PORT: 5432
+          POSTGRES_HOST: ${{ secrets.RDS_ENDPOINT }}
+          DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              export PORT=${PORT}
+              export DATABASE_URL=${DATABASE_URL}
+              '
+
+      - uses: actions/checkout@v2
       - name: Deploy
         env:
           PRIVATE_KEY: ${{ secrets.AWS_EC2_SSH_KEY }}
@@ -46,5 +63,5 @@ jobs:
 
               # Now we have got the access of EC2 and we will start the deploy .
               cd /home/ubuntu/node-app/microservice-template/
-              docker compose --profile deploy up --build -d
+              sudo docker compose --profile deploy up --build -d
               '
