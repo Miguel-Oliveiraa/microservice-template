@@ -14,11 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Connect via SSH and copy files
-      - name: Connect via SSH and copy files
+      # Step 2: Connect via SSH, remove old files, and copy new files
+      - name: Connect via SSH, remove old files, and copy new files
         run: |
-          scp -i "${{ secrets.AWS_EC2_SSH_KEY }}" -r ./* ubuntu@${{ secrets.AWS_EC2_IP }}:/node-app/microservice-template
+          ssh -i "${{ secrets.AWS_EC2_SSH_KEY }}" ubuntu@${{ secrets.AWS_EC2_IP }} "rm -rf /home/ubuntu/node-app/microservice-template/*"
+          scp -i "${{ secrets.AWS_EC2_SSH_KEY }}" -r ./* ubuntu@${{ secrets.AWS_EC2_IP }}:/home/ubuntu/node-app/microservice-template
           ssh -i "${{ secrets.AWS_EC2_SSH_KEY }}" ubuntu@${{ secrets.AWS_EC2_IP }} << EOF
-          cd /node-app/microservice-template
+          cd /home/ubuntu/node-app/microservice-template
           docker compose --profile deploy up --build -d
           EOF
